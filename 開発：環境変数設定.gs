@@ -1,7 +1,7 @@
 // 新エディタで作成する場合、GUIでプロパティを追加できないらしく不便なので、開発専用の関数を用意した。
 // 他プロジェクトでも使いまわそう。
 
-//* 開発中に間違えて実行すると悲惨なので、コメントアウトしておく(1敗)
+/* 開発中に間違えて実行すると悲惨なので、コメントアウトしておく(1敗)
 function initialize() {
   property("SSID", "spreadsheet_id", true)
   property("SSNAME", "spreadsheet_name", true);

@@ -1,3 +1,4 @@
+// 送られてきた１テキストを処理する。複数のテキストはpostで処理する
 function doGet(e) {
   const p = e.parameter;
   if(p.source == undefined) p.source="en";
@@ -7,8 +8,8 @@ function doGet(e) {
   p.translate = p.text;
   p.result = false;
 
+  const API_COUNTER = parseInt(property("API_COUNTER").message);
   try{
-    const API_COUNTER = parseInt(property("API_COUNTER").message);
     if(API_COUNTER > 5000) throw '[GAS-Translate/GetPost.gs]API制限のため、処理を中断しました。';
 
     // 翻訳実行
