@@ -1,3 +1,7 @@
+function check_apicounter() {
+  property("API_COUNTER");
+}
+
 /*
 ## 経緯
 GithubActionsで翻訳させると1リクエストにつきAPI制限がかかるため、これを回避するための措置が必要になった。
@@ -32,9 +36,10 @@ function debug_doGet() {
     text: "GASで変換するもの",
     source: "ja",
     target: "en",
+    extension: true  // 拡張機能からの呼び出しを想定
   };
   // property("API_COUNTER", "0");
-  doGet(e);
+  Logger.log(doGet(e));
 }
 ```
 

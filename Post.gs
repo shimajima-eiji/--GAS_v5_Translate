@@ -3,13 +3,13 @@ function doPost(e) {
   const contents = JSON.parse(e.postData.contents)
   if(contents.source == undefined) contents.source="ja";
   if(contents.target == undefined) contents.target="en";
-  if(contents.by == undefined) contents.by="No Data";
+  if(contents.by == undefined) contents.by="(POST)No Data";
 
   // try-catchに入る前に初期値を設定しておく
   contents.translate = [];
   contents.result = false;
 
-  let api_counter = parseInt(property("API_COUNTER").message);
+  let api_counter = parseInt(property("API_COUNTER").value);
 
   // contents.textでmapが実行された場合に実施
   try {

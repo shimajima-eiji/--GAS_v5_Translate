@@ -54,6 +54,6 @@ function property(key, value, force_flag=false) {
   Logger.log("開発：環境変数設定.gs/property: " + message);
   return {
     result: result,
-    message: message
+    value: message
   };
 }
