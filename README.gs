@@ -36,6 +36,7 @@ function debug_doGet() {
     text: "GASで変換するもの",
     source: "ja",
     target: "en",
+    by: "GASでデバッグ中",
     extension: true  // 拡張機能からの呼び出しを想定
   };
   // property("API_COUNTER", "0");
