@@ -1,37 +1,91 @@
-# 翻訳API(GAS)
-後述していますが、色々と使いやすいので教材として使ってます。
+## 経緯
+GithubActionsで翻訳させると1リクエストにつきAPI制限がかかるため、これを回避するための措置が必要になった。
 
-## 受講生へ。ここはメインブランチです。教材データは以下に置いてあります。
-[受講生はfor_studentブランチに教材を置いています。](https://github.com/shimajima-eiji/--GAS_v5_Translate/tree/for_student)
-https://github.com/shimajima-eiji/--GAS_v5_Translate/tree/for_student
+## 主要リンク
+- [リポジトリ](https://github.com/shimajima-eiji/--GAS_v5_Translate)
+  - [テンプレート](https://github.com/shimajima-eiji/--GAS_v5_Template)
+- [Gdrive:ディレクトリ](https://drive.google.com/drive/my-drive)
+- [Gdrive:スクリプト](https://script.google.com/home)
+- [Gdrive:スプレッドシート](https://docs.google.com/spreadsheets)
 
-実際に業務でも運用しているものなので、非常に参考になるはずです。
+## システムバージョン
+ver1.0.0
 
-### `Step: Google Apps Scripts(GAS)で翻訳サービスを作る`
-開発の余地を多く残していますが、基礎編と比べると難しいステップです。<br />
-いきなり学習・改修に入る前に、まずはGASの使い方を振り返りましょう。<br />
-コツは、まずは小さく作ってデバッグしていくことです。
+## 制限
+1日につき5000リクエストの上限がある
+クリアされるタイミングは不明(JSTとかUTCとか)
 
-GASのWebエディターはデバッグ機能が弱い（というか、事実上ないようなもの）なので、どうやってデバッグするか考えておきましょう。<br />
-慣れていないうちはprintデバッグがおすすめです。
+## 環境変数
+|key|value|用途|備考|
+|---|-----|---|----|
+|SSID|スプレッドシートID|デバッグ用シート||
+|SSNAME|シート名|デバッグ用シート||
+|ACCESS_TOKEN|チャネルアクセストークン|動作対象のLINEBOT||
+|DEBUG|(true / false)|デバッグフラグ。デバッグシートに反映させるために使用||
+|SSID_DEBUG|スプレッドシートID|デバッグ用シート||
+|SSNAME_DEBUG|シート名|デバッグ用シート||
+|DEBUG_ID|userId/groupId|デバッグ用アカウント。開発者の個人LINEなど||
 
----
+## デバッガ
+```
+function debug_doGet() {
+  const e = {}
+  e.parameter = {
+    text: "GASで変換するもの(GET)",
+    source: "ja",
+    target: "en",
+    by: "GASでデバッグ中",
+    extension: false  // 拡張機能からの呼び出しを想定
+  };
+  // property("API_COUNTER", "0");
+  doGet(e);
+}
 
-## 使い方
-### リクエスト
-|キー|値の概要|必須|デフォルト|
-|---|----|---|-------|
-|text|翻訳したい文字|必須||
-|source|翻訳する言語||ja(日本語)|
-|target|翻訳したい言語||en(英語)|
-|by|ロギングのため、送信元を表記||(GET/POST)No Data|
-|extension|true/false|||
+function debug_doPost() {
+  const e = {
+    postData: {
+      contents: JSON.stringify([{
+          text: ["GASで変換するもの(POST)"],
+          source: "ja",
+          target: "en",
+          by: "GASでデバッグ中",
+          extension: true  // 拡張機能からの呼び出しを想定
+        }]
+      )
+    }
+  };
+  // property("API_COUNTER", "0");
+  doPost(e);
+}
+```
 
-### レスポンス
-以下を追記してパラメータを返します。
+## パラメータ
+### doGet / doPost
+LINEの標準入力に準拠するが、他の入力にも拡張で対応できる
 
-|キー|値の概要|
-|---|---|
-|translate|textを翻訳した結果|
-|result|true/false|
-|error|result==falseのみ。実行に失敗した場合のメッセージ|
+#### リクエスト
+|キー|キー必須|デフォルト値|想定される値|概要|
+|---|-------|----------|---|
+|text|必須|なし|2byte String|翻訳前の単語。sourceに対応|
+|source||ja|enやjaなど|翻訳する言語。textの言語を指定|
+|target||en|enやjaなど|翻訳したい言語。textがtargetに変換される|
+
+#### レスポンス
+レスポンスはJSON String形式
+
+|キー|欠損の可能性|想定される値|概要|
+|---|----------|----------|----|
+|text|なし|2byte String|リクエストのtext|
+|source|なし|enやjaなど|リクエストのsource|
+|target|なし|enやjaなど|リクエストのtarget|
+|translate|なし|2byte String|翻訳後の単語。targetに対応|
+|result|なし|String|true / false|
+|error|あり|String|resultがfalse時のメッセージ|
+
+## システム管理情報
+| システム名称                 | 情報             |
+| -------------------------- | --------------- |
+| READMEフォーマットのバージョン | ver1.2022.02.09 |
+| README.gs -> README.md     | https://github.com/shimajima-eiji/--GAS_v5_Template/blob/main/.github/workflows/convert_gs2md.yml |
+| translate ja -> en         | https://github.com/shimajima-eiji/--GAS_v5_Template/blob/main/.github/workflows/translate_ja2en.yml |
+
