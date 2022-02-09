@@ -12,12 +12,12 @@ function __debug(message) {
 
 /* 開発中に間違えて実行すると悲惨なので、コメントアウトしておく(1敗)
 function initialize() {
-  __property("SSID", "", true)
-  __property("SSNAME", "", true);
-  __property("SSID_DEBUG", "", true)
-  __property("SSNAME_DEBUG", "", true);
-  __property("API_COUNTER", "", true);
-  __property("DEBUG", "", true);
+  __property("SSID", "spreadsheet_id", true)
+  __property("SSNAME", "spreadsheet_name", true);
+  __property("SSID_DEBUG", "spreadsheet_id", true)
+  __property("SSNAME_DEBUG", "spreadsheet_name", true);
+  __property("API_COUNTER", "0", true);
+  __property("DEBUG", "false", true);
 }
 // */
 
