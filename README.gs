@@ -1,20 +1,16 @@
-function check_apicounter() {
-  property("API_COUNTER");
-}
-
 /*
 ## 経緯
 GithubActionsで翻訳させると1リクエストにつきAPI制限がかかるため、これを回避するための措置が必要になった。
 
 ## 主要リンク
 - [リポジトリ](https://github.com/shimajima-eiji/--GAS_v5_Translate)
+  - [テンプレート](https://github.com/shimajima-eiji/--GAS_v5_Template)
 - [Gdrive:ディレクトリ](https://drive.google.com/drive/my-drive)
 - [Gdrive:スクリプト](https://script.google.com/home)
 - [Gdrive:スプレッドシート](https://docs.google.com/spreadsheets)
 
-## バージョン
-- README: ver1.0.2022.01.17
-- 開発:環境変数設定: https://github.com/shimajima-eiji/--GAS_v5_GetPost-Debug/blob/main/%E9%96%8B%E7%99%BA%EF%BC%9A%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E8%A8%AD%E5%AE%9A.gs
+## システムバージョン
+ver1.0.0
 
 ## 制限
 1日につき5000リクエストの上限がある
@@ -22,48 +18,76 @@ GithubActionsで翻訳させると1リクエストにつきAPI制限がかかる
 
 ## 環境変数
 |key|value|用途|備考|
-|---|---|---|---|
-|SSID|spreadsheet_id|||
-|SSNAME|spreadsheet_name|||
-|API_COUNTER|0|API制限監視用||
+|---|-----|---|----|
+|SSID|スプレッドシートID|デバッグ用シート||
+|SSNAME|シート名|デバッグ用シート||
+|ACCESS_TOKEN|チャネルアクセストークン|動作対象のLINEBOT||
+|DEBUG|(true / false)|デバッグフラグ。デバッグシートに反映させるために使用||
+|SSID_DEBUG|スプレッドシートID|デバッグ用シート||
+|SSNAME_DEBUG|シート名|デバッグ用シート||
+|DEBUG_ID|userId/groupId|デバッグ用アカウント。開発者の個人LINEなど||
 
 ## デバッガ
-### Get.gs
 ```
 function debug_doGet() {
   const e = {}
   e.parameter = {
-    text: "GASで変換するもの",
+    text: "GASで変換するもの(GET)",
     source: "ja",
     target: "en",
     by: "GASでデバッグ中",
-    extension: true  // 拡張機能からの呼び出しを想定
+    extension: false  // 拡張機能からの呼び出しを想定
   };
   // property("API_COUNTER", "0");
-  Logger.log(doGet(e));
+  doGet(e);
+}
+
+function debug_doPost() {
+  const e = {
+    postData: {
+      contents: JSON.stringify([{
+          text: ["GASで変換するもの(POST)"],
+          source: "ja",
+          target: "en",
+          by: "GASでデバッグ中",
+          extension: true  // 拡張機能からの呼び出しを想定
+        }]
+      )
+    }
+  };
+  // property("API_COUNTER", "0");
+  doPost(e);
 }
 ```
 
 ## パラメータ
-### doGet引数
-|リクエストボディ|必須|概要|
-|---|---|---|
-|?text=(文字列)|Required|翻訳したいテキスト|
-|&source=(en or ja)|Option(en)|翻訳したいテキストの言語|
-|&target=(en or ja)|Option(en)|翻訳したい言語|
+### doGet / doPost
+LINEの標準入力に準拠するが、他の入力にも拡張で対応できる
 
-### 戻り値
-JSON形式
+#### リクエスト
+|キー|キー必須|デフォルト値|想定される値|概要|
+|---|-------|----------|---|
+|text|必須|なし|2byte String|翻訳前の単語。sourceに対応|
+|source||ja|enやjaなど|翻訳する言語。textの言語を指定|
+|target||en|enやjaなど|翻訳したい言語。textがtargetに変換される|
 
-|パラメータ|動作|出力例|
-|---|---|---|
-|text|get|input text|
-|source|get|input source|
-|target|get|input target|
-|translate|get|result test|
-|result|get|true / false|
-|error|get|error message|
+#### レスポンス
+レスポンスはJSON String形式
 
-## READMEフォーマットのバージョン
-ver2022.01.17
+|キー|欠損の可能性|想定される値|概要|
+|---|----------|----------|----|
+|text|なし|2byte String|リクエストのtext|
+|source|なし|enやjaなど|リクエストのsource|
+|target|なし|enやjaなど|リクエストのtarget|
+|translate|なし|2byte String|翻訳後の単語。targetに対応|
+|result|なし|String|true / false|
+|error|あり|String|resultがfalse時のメッセージ|
+
+## システム管理情報
+| システム名称                 | 情報             |
+| -------------------------- | --------------- |
+| READMEフォーマットのバージョン | ver1.2022.02.09 |
+| README.gs -> README.md     | https://github.com/shimajima-eiji/--GAS_v5_Template/blob/main/.github/workflows/convert_gs2md.yml |
+| translate ja -> en         | https://github.com/shimajima-eiji/--GAS_v5_Template/blob/main/.github/workflows/translate_ja2en.yml |
+
 */

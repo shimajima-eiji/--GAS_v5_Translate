@@ -1,11 +1,23 @@
-// 新エディタで作成する場合、GUIでプロパティを追加できないらしく不便なので、開発専用の関数を用意した。
-// 他プロジェクトでも使いまわそう。
+function __debug_flag() {
+  let flag = (__property("DEBUG").value == "true") 
+    ? "false"
+    : "true";
+  __property("DEBUG", flag);
+}
+
+function __debug(message) {
+  // propertyからdebugを呼んでいるため、無限ループ回避のため平打ちする
+  if(PropertiesService.getScriptProperties().getProperty("DEBUG") == "true") Logger.log(message);
+}
 
 /* 開発中に間違えて実行すると悲惨なので、コメントアウトしておく(1敗)
 function initialize() {
-  property("SSID", "spreadsheet_id", true)
-  property("SSNAME", "spreadsheet_name", true);
-  property("API_COUNTER", "0", true);
+  __property("SSID", "", true)
+  __property("SSNAME", "", true);
+  __property("SSID_DEBUG", "", true)
+  __property("SSNAME_DEBUG", "", true);
+  __property("API_COUNTER", "", true);
+  __property("DEBUG", "", true);
 }
 // */
 
@@ -14,29 +26,29 @@ const GUARD_KEYS = [
   "SSNAME"
 ];
 
-function property(key, value, force_flag=false) {
+// get/setに対応
+function __property(key, value, force_flag=false) {
   let message = 
-  // 変えたり見られてはいけないキーが含まれていた場合、処理を中断する
-  // force_flagはリリース時には削除しておく
-  // (force_flag == false && GUARD_KEYS.includes(key) === true )
-  (GUARD_KEYS.includes(key) === true )
-  ? "[Skip] key is protected."
 
   // [stop]keyもvalueもない
-  : (key == undefined && value == undefined) 
+  (key == undefined && value == undefined) 
   ? "[Stop:環境変数設定.property] Required key(get). Optional value(set)"
 
   // [get]keyだけの場合
   : (key != undefined && value == undefined)
   ? PropertiesService.getScriptProperties().getProperty(key)
 
-  // [set]keyとvalueが存在する場合
-  : (key != undefined && value != undefined)
+  // [set]keyとvalueが存在する場合で、上書き禁止ではないもの
+  : (key != undefined && value != undefined && ! GUARD_KEYS.includes(key))
   ? true
   
+  // [set]keyとvalueが存在する場合で、上書き禁止の可能性があるもの
+  : (key != undefined && value != undefined && GUARD_KEYS.includes(key) && force_flag)
+  ? true
+
   // [stop]keyがなくてvalueがあるなど、想定外あるいは不正な処理の場合
-  : "[Stop:環境変数設定.property] Illegal pattern.";
-  
+  : "[Skip] key is protected."
+ 
   // set時のみ
   result = "Failed";
   if (message === true) {
@@ -51,7 +63,7 @@ function property(key, value, force_flag=false) {
   }
 
   // 入力したプロパティが表示されればOK
-  Logger.log("開発：環境変数設定.gs/property: " + message);
+  __debug("開発：環境変数設定.gs/property: " + message);
   return {
     result: result,
     value: message
