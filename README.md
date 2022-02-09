@@ -20,7 +20,7 @@ ver1.0.0
 |---|-----|---|----|
 |SSID|スプレッドシートID|デバッグ用シート||
 |SSNAME|シート名|デバッグ用シート||
-|ACCESS_TOKEN|チャネルアクセストークン|動作対象のLINEBOT||
+|API_COUNTER|数値|API制限監視用||
 |DEBUG|(true / false)|デバッグフラグ。デバッグシートに反映させるために使用||
 |SSID_DEBUG|スプレッドシートID|デバッグ用シート||
 |SSNAME_DEBUG|シート名|デバッグ用シート||
