@@ -1,5 +1,6 @@
 function __debug_flag() {
-  let flag = (__property("DEBUG").value == "true") 
+  // __property("DEBUG").valueでも同じ値を取れるが、true->false/false->true両方で__debugが動いてしまうためやらない
+  let flag = (PropertiesService.getScriptProperties().getProperty("DEBUG") == "true") 
     ? "false"
     : "true";
   __property("DEBUG", flag);
@@ -7,7 +8,8 @@ function __debug_flag() {
 
 function __debug(message) {
   // propertyからdebugを呼んでいるため、無限ループ回避のため平打ちする
-  if(PropertiesService.getScriptProperties().getProperty("DEBUG") == "true") Logger.log(message);
+  if(PropertiesService.getScriptProperties().getProperty("DEBUG") == "true")
+    Logger.log(message);
 }
 
 /* 開発中に間違えて実行すると悲惨なので、コメントアウトしておく(1敗)
@@ -32,7 +34,7 @@ function __property(key, value, force_flag=false) {
 
   // [stop]keyもvalueもない
   (key == undefined && value == undefined) 
-  ? "[Stop:環境変数設定.property] Required key(get). Optional value(set)"
+  ? "[Stop:property.gs/property] Required key(get). Optional value(set)"
 
   // [get]keyだけの場合
   : (key != undefined && value == undefined)
@@ -51,7 +53,7 @@ function __property(key, value, force_flag=false) {
  
   // set時のみ
   result = "Failed";
-  if (message === true) {
+  if (message == true) {
     PropertiesService.getScriptProperties().setProperty(key, value);
     message = "[Complate:local_set] key:" +key + " / value:" + PropertiesService.getScriptProperties().getProperty(key);
     result = "Success";
@@ -63,7 +65,7 @@ function __property(key, value, force_flag=false) {
   }
 
   // 入力したプロパティが表示されればOK
-  __debug("開発：環境変数設定.gs/property: " + message);
+  __debug("[property.gs/property] " + message);
   return {
     result: result,
     value: message

@@ -2,21 +2,25 @@
 function doGet(e) {
   // デバッグモード時はデータを保存する
   if(__property("DEBUG").value == "true")
-    __output_sheet_debug(e);
+    __output_sheet_debug(JSON.stringify(e));
 
-  return __output_api(
-    (!e || !e.parameter)
+  try {
+    return __output_api(
+      (!e || !e.parameter)
 
-    // おそらくないはず
-    ? {result: false, message: "データフォーマットが不正です。"}
+      // おそらくないはず
+      ? {result: false, message: "データフォーマットが不正です。"}
 
-    // データが正しい時に、後述の通り処理される
-    : (e.parameter.extension)
+      // データが正しい時に、後述の通り処理される
+      : (e.parameter.extension)
 
-      // 拡張機能を開いた時の履歴を取得する
-      ? JSON.parse(__property("before").value)
+        // 拡張機能を開いた時の履歴を取得する
+        ? JSON.parse(__property("before").value)
 
-      // 翻訳処理を実施し、結果を取得する
-      : __main(e.parameter)
-  );
+        // 翻訳処理を実施し、結果を取得する
+        : __main(e.parameter)
+    );
+  } catch(e) {
+    return __output_api({result: false, message: "データフォーマットが不正です。"});
+  }
 }

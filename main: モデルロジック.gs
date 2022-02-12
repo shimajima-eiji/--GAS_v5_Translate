@@ -31,7 +31,7 @@ function __main(p, method = "GET") {
     } catch(e) {}
     return translate;
   });
-  if(typeof(p.text) === String ) {
+  if(typeof(p.text) == "string" ) {
     p.translate = result[0];
 
     // 今回の結果を前回値として保存する
@@ -46,4 +46,5 @@ function __main(p, method = "GET") {
 
   // 翻訳カウンターを記録しておく
   __property("API_COUNTER", api_counter);
+  return p;
 }

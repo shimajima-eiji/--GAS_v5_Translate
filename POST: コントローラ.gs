@@ -4,13 +4,18 @@ function doPost(e) {
   if(__property("DEBUG").value == "true")
     __output_sheet_debug(e);
 
-  return __output_api(
-    (!e || !e.postData || !e.postData.contents || JSON.parse(e.postData.contents).length == 0)
+  try{
+    const contents = JSON.parse(e.postData.contents)
+    return __output_api(
+      (!e || !e.postData || !e.postData.contents || JSON.parse(e.postData.contents).length == 0)
 
-    // おそらくないはず
-    ? {result: false, message: "データフォーマットが不正です。"}
+      // おそらくないはず
+      ? {result: false, message: "データフォーマットが不正です。"}
 
-    // 翻訳処理を実施した結果を取得
-    : __main(JSON.parse(e.postData.contents)[0], "POST")
-  );
+      // 翻訳処理を実施した結果を取得
+      : __main((Array.isArray(contents) ? contents[0] : contents), "POST")
+    );
+  } catch(e) {
+    return __output_api({result: false, message: "データフォーマットが不正です。"});
+  }
 }
