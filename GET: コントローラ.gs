@@ -4,12 +4,13 @@ function doGet(e) {
   if(__property("DEBUG").value == "true")
     __output_sheet_debug(JSON.stringify(e));
 
+  let error = {result: false, message: `データフォーマットが不正です。\n${JSON.stringify(e)}`}
   try {
     return __output_api(
       (!e || !e.parameter)
 
       // おそらくないはず
-      ? {result: false, message: "データフォーマットが不正です。"}
+      ? error
 
       // データが正しい時に、後述の通り処理される
       : (e.parameter.extension)
@@ -21,6 +22,6 @@ function doGet(e) {
         : __main(e.parameter)
     );
   } catch(e) {
-    return __output_api({result: false, message: "データフォーマットが不正です。"});
+    return __output_api(error);
   }
 }

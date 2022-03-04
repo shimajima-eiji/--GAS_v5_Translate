@@ -44,16 +44,16 @@ function __property(key, value, force_flag=false) {
   : (key != undefined && value != undefined && ! GUARD_KEYS.includes(key))
   ? true
   
-  // [set]keyとvalueが存在する場合で、上書き禁止の可能性があるもの
+  // [set]keyとvalueが存在する場合で、上書き禁止の可能性があるものを強制的に書き換える場合
   : (key != undefined && value != undefined && GUARD_KEYS.includes(key) && force_flag)
   ? true
 
   // [stop]keyがなくてvalueがあるなど、想定外あるいは不正な処理の場合
   : "[Skip] key is protected."
- 
+
   // set時のみ
   result = "Failed";
-  if (message == true) {
+  if (message === true) {
     PropertiesService.getScriptProperties().setProperty(key, value);
     message = "[Complate:local_set] key:" +key + " / value:" + PropertiesService.getScriptProperties().getProperty(key);
     result = "Success";
