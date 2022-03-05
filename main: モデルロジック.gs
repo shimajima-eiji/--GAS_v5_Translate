@@ -10,27 +10,23 @@ function __main(p, method = "GET") {
 
     // 入力がなければ初期値を入れる
     if(p.source == undefined) p.source = "ja";
-    if(p.target == undefined) p.target = "en";
-    if(p.by == undefined) p.by = "(" + method + ")No Data";
+    if(typeof(p.source) == "object" && p.text.length > p.source.length) p.source = p.source[0]
 
-    // テキストが一つの場合はここまで
-    if(typeof(p.text) != "object") return result;
+    if(p.target == undefined) p.target = "en";
+    if(typeof(p.target) == "object" && p.text.length > p.target.length) p.target = p.target[0]
+
+    // sourceやtargetと違いbyは変更することはないはずなので統一する
+    if(p.by == undefined) p.by = "(" + method + ")No Data";
+    if(typeof(p.by) == "object" && p.by.length > 0) p.by = p.by[0]
 
     // sourceとtargetが初期値ではない場合
-    if(typeof(p.source) == "object" && typeof(p.target) == "object") {
-      // テキスト数と翻訳指定数が一致している場合、指定に従い翻訳する
-      if(p.text.length == p.source.length && p.text.length == p.target.length) {
-        p.by = p.by[0];
-        if(p.by == undefined) p.by = "(" + method + ")No Data";
-        result = true;
-
-      // テキスト数と翻訳指定数が一致していない場合、最初の設定を適用する
-      // sourceもtargetもない場合は初期値(string)のため、この条件は通らない
-      } else {
-        p.source = p.source[0]
-        p.target = p.target[0]
-      }
-    }
+    // テキスト数と翻訳指定数が一致している場合、指定に従い翻訳する
+    if(typeof(p.source) == "object"
+    && typeof(p.target) == "object"
+    && p.text.length == p.source.length
+    && p.text.length == p.target.length
+    && typeof(p.by) == "object")
+      result = true;
     return result;
   })();
 
@@ -39,7 +35,7 @@ function __main(p, method = "GET") {
   let api_counter = parseInt(__property("API_COUNTER").value);
   let result = false;
   let text = (typeof(p.text) == "object") ? p.text :[p.text];
-  p.translates = text.map(word => {
+  p.translates = text.map((word, index) => {
     // API制限だったり、翻訳に失敗した場合は翻訳したい文字をそのまま転記するため、wordを保持する
     let translate = word;
 
