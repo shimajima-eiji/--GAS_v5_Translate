@@ -18,7 +18,7 @@ function doGet(e) {
         ? JSON.parse(__property("before").value)
 
         // 翻訳処理を実施し、結果を取得する
-        : __main(e.parameter)
+        : __main(e.parameters)
     );
   } catch(e) {
     return __output_api({result: false, message: `データフォーマットが不正です。\n${JSON.stringify(e)}`});
