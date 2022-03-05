@@ -1,8 +1,10 @@
 function __output_api(json) {
+  json_string = JSON.stringify(json)
+  if(__property("DEBUG").value == "true")
+    __output_sheet_debug(json_string);
+
   return ContentService
-    .createTextOutput(
-      JSON.stringify(json)
-    )
+    .createTextOutput(json_string)
     .setMimeType(ContentService.MimeType.JSON);
 }
 
